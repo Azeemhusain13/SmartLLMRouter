@@ -1,4 +1,4 @@
-import os
+import streamlit as st
 from openai import OpenAI
 
 from model_fetcher import get_free_models
@@ -36,11 +36,8 @@ class SmartLLMRouter:
     def ask(self, prompt):
 
         client = OpenAI(
-
             base_url="https://openrouter.ai/api/v1",
-
-            api_key=os.getenv("OPENROUTER_API_KEY")
-
+            api_key=st.secrets["OPENROUTER_API_KEY"]
         )
 
         for model in self.available_models:
@@ -50,17 +47,11 @@ class SmartLLMRouter:
                 print("Trying", model)
 
                 response = client.chat.completions.create(
-
                     model=model,
-
                     messages=[
-
                         {"role": "user", "content": prompt}
-
                     ],
-
                     max_tokens=300
-
                 )
 
                 return response.choices[0].message.content
@@ -68,40 +59,30 @@ class SmartLLMRouter:
             except Exception as e:
 
                 print(e)
-
                 continue
 
         return "All models failed."
 
 
     # -------------------------
-    # SPECIFIC MODEL CALL ⭐⭐⭐⭐⭐
+    # SPECIFIC MODEL CALL
     # -------------------------
 
     def ask_with_specific_model(self, prompt, model):
 
         client = OpenAI(
-
             base_url="https://openrouter.ai/api/v1",
-
-            api_key=os.getenv("OPENROUTER_API_KEY")
-
+            api_key=st.secrets["OPENROUTER_API_KEY"]
         )
 
         print(f"Using selected model → {model}")
 
         response = client.chat.completions.create(
-
             model=model,
-
             messages=[
-
                 {"role": "user", "content": prompt}
-
             ],
-
             max_tokens=300
-
         )
 
         return response.choices[0].message.content
